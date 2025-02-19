@@ -28,7 +28,7 @@ library(tidyverse)
 
 Visuals like histograms, frequency polygons, and distributions give us a highly *detailed* view of our data. However, this can actually be overwhelming. To illustrate, let's dive straight into an exercise.
 
-### __q1__ Interpret plots
+### **q1** Interpret plots
 
 Which class of vehicle tends to have the most "middle" value of engine displacement (`displ`)? More importantly, which plot *best* helps you make that determination?
 
@@ -51,13 +51,11 @@ mpg %>%
   geom_boxplot()
 ```
 
-**Observations**
-- Which class tends to be most "middle" for `displ` values?
-- Which plot is more effective for answering the previous question?
+**Observations** - Which class tends to be most "middle" for `displ` values? - Which plot is more effective for answering the previous question?
 
 ## Boxplot definition
 
-A boxplot shows a few key *summary statistics* from our data. The "box" itself shows the lower quartile (25% of the data) and upper quartile (75% of the data), while the bold line shows the median (50% of the data). 
+A boxplot shows a few key *summary statistics* from our data. The "box" itself shows the lower quartile (25% of the data) and upper quartile (75% of the data), while the bold line shows the median (50% of the data).
 
 The following code shows how the quartiles can be manually computed.
 
@@ -92,27 +90,27 @@ The botplot also includes *fences* (the thin vertical lines) to show where there
 
 There's a "trick" I've pulled in the earlier boxplot; I *reordered* the `class` variable based on the value of `displ` in each group. This is a way to make our plots more informative. The `fct_reorder(fct, x)` function is used in a `mutate()` call to directly override the original `fct` column.
 
-### __q2__ Reorder
+### **q2** Reorder
 
 Reorder `class` according to `hwy`. Pay attention to how this modifies the plot.
 
 ```{r q2-task}
 ## TASK: Edit this code to reorder `class` according to `hwy`
 mpg %>%
+  mutate(class = fct_reorder(class, hwy)) %>% 
   ggplot(aes(x = class, y = hwy)) +
   geom_boxplot()
 ```
-
 
 ## Cut helpers
 
 Plotting multiple boxplots works best when we have a categorical variable for grouping. However, we can "hack" a continuous variable into a categorical one by "cutting" the values, much like when we bin values in a histogram. The following helpers give us different ways to cut a continuous variable:
 
-- `cut_interval()`
-- `cut_number()`
-- `cut_width()`
+-   `cut_interval()`
+-   `cut_number()`
+-   `cut_width()`
 
-### __q3__ Cut a continuous variable
+### **q3** Cut a continuous variable
 
 Use a `cut_*` verb (of your choice) to create a categorical variable out of `carat`. Tweak the settings in your cut and document your observations.
 
@@ -121,13 +119,14 @@ Use a `cut_*` verb (of your choice) to create a categorical variable out of `car
 ```{r q1-task}
 diamonds %>%
   ## TODO: Use mutate to add the column `carat_cut`
+  mutate(carat_cut = cut_interval(carat, 4)) %>% 
   ggplot(aes(x = carat_cut, y = price)) +
   geom_boxplot()
 ```
 
-**Observations**
-- Write your observations here!
-- Make sure to distinguish between the trend in median (bar), quantiles (box edges), and whiskers (vertical lines)
+**Observations** - Write your observations here! - Make sure to distinguish between the trend in median (bar), quantiles (box edges), and whiskers (vertical lines)
+
+-   The lowest carat cut grouping is interesting - it has a significantly lower mean and upper/lower quartile, but has many many more outliers compared to the other groups. The other groups have decreasing whiskers and roughly decreasing quartiles as the carat increases. The median becomes more centered between the quartiles as you advice up.
 
 ## Coordinate flipping
 
@@ -142,20 +141,23 @@ mpg %>%
 
 Coordinate flipping is especially helpful when we have a lot of categories.
 
-### __q4__ Flip a plot
+### **q4** Flip a plot
 
 The following plot has overlapping x-axis labels. Use a verb from the reading to `flip` the coordinates and improve readability.
 
 ```{r q4-task}
 mpg %>%
   ggplot(aes(manufacturer, hwy)) +
-  geom_boxplot()
+  geom_boxplot() +
+  coord_flip()
 ```
 
 This is a simple---but important---trick to remember when visualizing data with many categories.
 
 <!-- include-exit-ticket -->
+
 # Exit Ticket
+
 <!-- -------------------------------------------------- -->
 
 Once you have completed this exercise, make sure to fill out the **exit ticket survey**, [linked here](https://docs.google.com/forms/d/e/1FAIpQLSeuq2LFIwWcm05e8-JU84A3irdEL7JkXhMq5Xtoalib36LFHw/viewform?usp=pp_url&entry.693978880=e-vis03-boxplots-assignment.Rmd).
