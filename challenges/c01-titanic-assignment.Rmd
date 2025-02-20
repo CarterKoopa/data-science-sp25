@@ -65,7 +65,7 @@ glimpse(df_titanic)
 -   Sex: either `Male` or `Female`
 -   Age: either `Child` or `Adult`
 -   Survived: either `Yes` or `No`
--   n: integer value, presumably some sort of identification number.
+-   n: integer value describing the number of people in each above combination of categories.
 
 ### **q2** Skim the [Wikipedia article](https://en.wikipedia.org/wiki/RMS_Titanic) on the RMS Titanic, and look for a total count of souls aboard. Compare against the total computed below. Are there any differences? Are those differences large or small? What might account for those differences?
 
@@ -78,11 +78,11 @@ df_titanic %>% summarize(total = sum(n))
 **Observations**:
 
 -   Write your observations here
-    -   The total number of souls on-board the Titanic according to Wikipedia was 2202. The `df-titanic` dataframe contains 2201 entries. As such, the entries probably refer to each individual soul on board the Titanic at the time of sinking.
+    -   The total number of souls on-board the Titanic according to Wikipedia was 2224. The `df-titanic` dataframe contains 2201 entries. As such, the entries probably refer to each individual soul on board the Titanic at the time of sinking.
 -   Are there any differences?
-    -   Assuming that the dataframe refers to all people on-board the Titanic at the time of sinking, the dataset here includes one less person than is stated to have been on the Titanic, `2201` vs. `2202`.
+    -   Assuming that the dataframe refers to all people on-board the Titanic at the time of sinking, there are less people accounted for in this dataset than were presumably on the Titanic. Approximately 23 people are missing from this dataset.
 -   If yes, what might account for those differences?
-    -   The Wikipedia article states that the exact number of people that were on-board the Titantic is unknown, given that not everyone who purchased a ticket ended up boarding the vessel. This different in the exact outcomes and exact number of all souls on-board likely accounts for this single-person difference in the total count.
+    -   The Wikipedia article states that the exact number of people that were on-board the Titantic is unknown, given that not everyone who purchased a ticket ended up boarding the vessel. This difference in the exact outcomes and exact number of all souls on-board likely accounts for this relatively small difference in the statistics compiled within this dataset. Further, it can reasonably be assumed that collecting survival data in 1912 was fairly difficult, given the chaos of the rescue and subsequent scattering of people, such that the outcome of every single person onboard is not precisely known.
 
 ### **q3** Create a plot showing the count of persons who *did* survive, along with aesthetics for `Class` and `Sex`. Document your observations below.
 
