@@ -162,10 +162,10 @@ df_q1 %>%
 - There is a decreasing number of observations for each decreasing
   quality of distinctiveness.
 
-- With increasing distinctiveness, the mean velocity increases very
+- With increasing distinctness, the mean velocity increases very
   slightly.
 
-- The average of the most distinct photos is closest to the known true
+- The mean of the distinctness 1 observations is closest to the true
   value.
 
 \- Why might your table differ from Michelson’s?
@@ -368,8 +368,8 @@ Differences - (your responses here)
 ``` r
 df_temp <-  
   df_q2 %>% 
-    group_by(Temp) %>% 
-    summarise(n = n(), AverageVelocity = mean(VelocityVacuum)) 
+  group_by(Temp) %>% 
+  summarise(n = n(), AverageVelocity = mean(VelocityVacuum)) 
 
 df_temp %>% 
   ggplot(aes(x = Temp, y = AverageVelocity)) +
@@ -418,40 +418,36 @@ df_q2 %>%
   summarise(
     VelocityVacuumMean = mean(VelocityVacuum), 
     VelocityVacuumStandardDeviation = sd(VelocityVacuum)
-    )
+    ) %>% 
+  ggplot() +
+  geom_point(
+    mapping = aes(
+      x = Distinctness,
+      y = VelocityVacuumMean)
+    ) +
+  geom_hline(yintercept = LIGHTSPEED_VACUUM, linetype="dashed", color="red")
 ```
 
-    ## # A tibble: 3 × 3
-    ##   Distinctness VelocityVacuumMean VelocityVacuumStandardDeviation
-    ##   <fct>                     <dbl>                           <dbl>
-    ## 1 1                       299900                             76.2
-    ## 2 2                       299950.                            79.3
-    ## 3 3                       299954.                            76.4
-
-``` r
-  # ggplot() +
-  # geom_col(
-  #   mapping = aes(
-  #     x = Distinctness,
-  #     y = VelocityVacuumMean)
-  #   ) +
-  # geom_hline(yintercept = LIGHTSPEED_VACUUM, linetype="dashed", color="red")
-```
+![](c02-michelson-assignment_files/figure-gfm/q5-3-1.png)<!-- -->
 
 Observations
 
-- I chose this graph to determine if distinctiveness of the measurement
-  had an impact, on average, of the accuracy.
+- I chose this visulization to determine if distinctness of the
+  measurement had an impact, on average, of the accuracy.
 
 - Overall, there is fairly little variation between the mean velocity in
-  a vacuum between the various distinctiveness of measurements. In
-  particular, distinctiveness 2 and 3 are very close together, varying
-  by only about 3 meters. Distinctiveness 1 varies slightly more, but
-  still only 50 meters.
+  a vacuum between the various distinctnesses of measurements. In
+  particular, distinctness 2 and 3 are very close together, varying by
+  only about 3 meters. Distinctness 1 varies slightly more, but still
+  only 50 meters.
 
-- There does not seem to be more standard deviation between the
-  distinctness levels suggesting that the distinctiveness doesn’t impact
-  the precision.
+- Based on analysis of the data aside from this visualization, there
+  does not seem to be more standard deviation between the distinctness
+  levels. This suggests that the distinctness doesn’t impact the
+  precision.
+
+- Distinctness 1, despite varying from the other two fairly close
+  distinctness-es, remains closest to the true value.
 
 ## Bibliography
 
