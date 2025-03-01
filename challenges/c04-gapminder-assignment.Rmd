@@ -12,17 +12,20 @@ prerequisites:
 *Purpose*: Learning to do EDA well takes practice! In this challenge you'll further practice EDA by first completing a guided exploration, then by conducting your own investigation. This challenge will also give you a chance to use the wide variety of visual tools we've been learning.
 
 <!-- include-rubric -->
+
 # Grading Rubric
+
 <!-- -------------------------------------------------- -->
 
 Unlike exercises, **challenges will be graded**. The following rubrics define how you will be graded, both on an individual and team basis.
 
 ## Individual
+
 <!-- ------------------------- -->
 
 | Category | Needs Improvement | Satisfactory |
-|----------|----------------|--------------|
-| Effort | Some task __q__'s left unattempted | All task __q__'s attempted |
+|----|----|----|
+| Effort | Some task **q**'s left unattempted | All task **q**'s attempted |
 | Observed | Did not document observations, or observations incorrect | Documented correct observations based on analysis |
 | Supported | Some observations not clearly supported by analysis | All observations clearly supported by analysis (table, graph, etc.) |
 | Assessed | Observations include claims not supported by the data, or reflect a level of certainty not warranted by the data | Observations are appropriately qualified by the quality & relevance of the data and (in)conclusiveness of the support |
@@ -30,47 +33,67 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 | Code Styled | Violations of the [style guide](https://style.tidyverse.org/) hinder readability | Code sufficiently close to the [style guide](https://style.tidyverse.org/) |
 
 ## Submission
+
 <!-- ------------------------- -->
 
 Make sure to commit both the challenge report (`report.md` file) and supporting files (`report_files/` folder) when you are done! Then submit a link to Canvas. **Your Challenge submission is not complete without all files uploaded to GitHub.**
 
-
 ```{r setup}
 library(tidyverse)
+library(ggplot2)
 library(gapminder)
-
 ```
 
-*Background*: [Gapminder](https://www.gapminder.org/about-gapminder/) is an
-independent organization that seeks to educate people about the state of the
-world. They seek to counteract the worldview constructed by a hype-driven media
-cycle, and promote a "fact-based worldview" by focusing on data. The dataset
-we'll study in this challenge is from Gapminder.
+*Background*: [Gapminder](https://www.gapminder.org/about-gapminder/) is an independent organization that seeks to educate people about the state of the world. They seek to counteract the worldview constructed by a hype-driven media cycle, and promote a "fact-based worldview" by focusing on data. The dataset we'll study in this challenge is from Gapminder.
 
 # Guided EDA
+
 <!-- -------------------------------------------------- -->
 
 First, we'll go through a round of *guided EDA*. Try to pay attention to the high-level process we're going through---after this guided round you'll be responsible for doing another cycle of EDA on your own!
 
-### __q0__ Perform your "first checks" on the dataset. What variables are in this
+### **q0** Perform your "first checks" on the dataset. What variables are in this
+
 dataset?
 
 ```{r q0-task}
 ## TASK: Do your "first checks" here!
+head(gapminder)
+glimpse(gapminder)
+summary(gapminder)
+
+gapminder_fil <-
+  filter(gapminder, year == 1952) %>% 
+  filter(continent == "Asia")
+gapminder_fil
 ```
 
 **Observations**:
 
-- Write all variable names here
+-   `country`: string representing the name of a country
+-   `continent`: string representing presumably the continent of that country
+-   `year`: integer representing a year, presumably when the proceeding data was captured.
+-   `lifeExp`: double value, likely the average life expectancy of a person living in the prior-specified country in the prior-specified year
+-   `pop`: integer representing the population of `country` in `year`
+-   `gdpPercap`: the gross domestic product per capita in `country` in `year`
 
-### __q1__ Determine the most and least recent years in the `gapminder` dataset.
+### **q1** Determine the most and least recent years in the `gapminder` dataset.
 
 *Hint*: Use the `pull()` function to get a vector out of a tibble. (Rather than the `$` notation of base R.)
 
 ```{r q1-task}
 ## TASK: Find the largest and smallest values of `year` in `gapminder`
-year_max <- NA_real_
-year_min <- NA_real_
+year_max <-
+  gapminder %>% 
+  select(year) %>% 
+  max()
+year_min <-
+  gapminder %>% 
+  select(year) %>% 
+  min()
+
+year_max
+year_min
 ```
 
 Use the following test to check your work.
@@ -90,32 +113,68 @@ if (is_tibble(year_max)) {
 print("Nice!")
 ```
 
-### __q2__ Filter on years matching `year_min`, and make a plot of the GDP per capita against continent. Choose an appropriate `geom_` to visualize the data. What observations can you make?
+### **q2** Filter on years matching `year_min`, and make a plot of the GDP per capita against continent. Choose an appropriate `geom_` to visualize the data. What observations can you make?
 
 You may encounter difficulties in visualizing these data; if so document your challenges and attempt to produce the most informative visual you can.
 
 ```{r q2-task}
 ## TASK: Create a visual of gdpPercap vs continent
+
+gapminder %>% 
+  filter(year == year_min) %>% 
+  filter(country != "Kuwait") %>% 
+  ggplot(aes(x = continent, y = gdpPercap)) +
+  geom_point()
+
+gapminder %>% 
+  filter(year == year_min) %>% 
+  filter(country != "Kuwait") %>% 
+  ggplot(aes(x = continent, y = gdpPercap)) +
+  geom_boxplot()
 ```
+
+Note on this plot: the country of Kuwait in Asia is excluded due to the significantly higher magnitude of its GDP, \$108,382.
 
 **Observations**:
 
-- Write your observations here
+-   Africa has the lowest median and quartiles of GDP, although there are several outlier values and a longer whisker of higher values more consistent with other, more developed continents.
+-   Oceania has by far the lowest variation between the lower and upper quartiles, likely due to the very small number of countries inside. Further, this creates by far the highest mean compared to other countries - the only values on-par are the Americas outliers and the very tip of the European upper whisker.
+-   Europe has both the highest median and largest variation between upper and lower quartiles, alongside the longest wiskers on the boxplot.
+-   The Americas have particularly large outlier GDPs.
+-   While Kuwait is by far the highest GDP, Europe has the next highest GDP per capita with its singular, quite large outlier point.
 
 **Difficulties & Approaches**:
 
-- Write your challenges and your approach to solving them
+-   The most pressing challenge I ran into was that of Kuwait, which has a GDP astronomically higher than any other country in the dataset and requires such a large y-axis that the rest of the data basically becomes unreadable.
+    -   I decided that excluding Kuwait and explicitly calling out its absence under the plot was the most effective way to display every other country's GDP accurately.
+-   I tried starting with `geom_point`, but I felt there was a more descriptive way to show the data other than the densely packed points that dominated parts of the graph. I decided on a boxplot since it would give a better idea of the median value and still include various outliers.
 
-### __q3__ You should have found *at least* three outliers in q2 (but possibly many more!). Identify those outliers (figure out which countries they are).
+### **q3** You should have found *at least* three outliers in q2 (but possibly many more!). Identify those outliers (figure out which countries they are).
 
 ```{r q3-task}
 ## TASK: Identify the outliers from q2
+large_outlier <-
+  gapminder %>% 
+  filter(year == year_min) %>% 
+  arrange(desc(gdpPercap))
+
+large_outlier
+
+oceania <-
+  gapminder %>% 
+  filter(year == year_min) %>% 
+  filter(continent == "Oceania")
+
+oceania
 ```
 
 **Observations**:
 
-- Identify the outlier countries from q2
-  - (Your response here)
+-   Identify the outlier countries from q2
+    -   As discussed in the previous quesiton, Kuwait is the major outlier with a huge GDP relative to that of our countries.
+    -   In Europe, Switzerland is the large outlier where the GDP is significantly larger than that of our countries.
+    -   In the Americas, the US is the large outlier for highest GDP. Canada and Venezuela are also fairly large outliers.
+    -   Oceania is an outlier as it only contains two countries and both countries are quite close in GDP. As such, there is very little variation. in the quartiles/outliers/etc.
 
 *Hint*: For the next task, it's helpful to know a ggplot trick we'll learn in an upcoming exercise: You can use the `data` argument inside any `geom_*` to modify the data that will be plotted *by that geom only*. For instance, you can use this trick to filter a set of points to label:
 
@@ -133,41 +192,81 @@ gapminder %>%
   )
 ```
 
-### __q4__ Create a plot similar to yours from q2 studying both `year_min` and `year_max`. Find a way to highlight the outliers from q3 on your plot *in a way that lets you identify which country is which*. Compare the patterns between `year_min` and `year_max`.
+### **q4** Create a plot similar to yours from q2 studying both `year_min` and `year_max`. Find a way to highlight the outliers from q3 on your plot *in a way that lets you identify which country is which*. Compare the patterns between `year_min` and `year_max`.
 
 *Hint*: We've learned a lot of different ways to show multiple variables; think about using different aesthetics or facets.
 
 ```{r q4-task}
 ## TASK: Create a visual of gdpPercap vs continent
+gapminder %>%
+  filter(year == year_min | year == year_max) %>% 
+  mutate(year = as.factor(year)) %>% 
+  ggplot(aes(x = continent, y = gdpPercap, fill = year)) +
+  geom_boxplot() +
+  geom_point(
+    data = . %>% filter(country %in% c("Kuwait", "Switzerland", "United States")),
+    mapping = aes(color = country, fill = year),
+    size = 2,
+    position = position_dodge(width = 0.75)
+  )
 ```
 
 **Observations**:
 
-- Write your observations here
+-   GDP per capita median and upper quartiles increased in every continent between the two years.
+-   All continents have wider quartiles in 2007 than in 1952, but this is especially true in Europe and Asia.
+-   The magnitude by which Kuwait is an outlier is drastically reduced from 1952 to 2007.
+-   Switzerland is no longer an outlier to the extent it once was, and there are other outlier countries with higher GDPs per capita.
+-   There are only two large outliers in the Americas, and the US is still much ahead of the continent as a whole.
 
 # Your Own EDA
+
 <!-- -------------------------------------------------- -->
 
 Now it's your turn! We just went through guided EDA considering the GDP per capita at two time points. You can continue looking at outliers, consider different years, repeat the exercise with `lifeExp`, consider the relationship between variables, or something else entirely.
 
-### __q5__ Create *at least* three new figures below. With each figure, try to pose new questions about the data.
+### **q5** Create *at least* three new figures below. With each figure, try to pose new questions about the data.
 
 ```{r q5-task1}
 ## TASK: Your first graph
+gapminder %>% 
+  filter(year == year_min | year == year_max) %>% 
+  mutate(year = as.factor(year)) %>% 
+  ggplot(aes(continent, lifeExp, fill = year)) +
+  geom_boxplot()
 ```
 
-- (Your notes and observations here)
+-   Between 1952 and 2007, life expectancy increased across every continent.
+-   In 2007, Africa has by far the largest modern variation in life expectancy, with ages ranging from under 40 to the upper 70s.
+-   Oceania has the highest median life expectancy in 2007, but the largest outliers are in Asia.
+-   With the exception of Africa, the variation between the upper/lower quartiles and the extreme outliers has decreased from 1952 to 2007.
+-   Upon initial inspection, Asia has seem to have made the largest jump from 1952 to 2007 in terms of median life expectancy.
 
 ```{r q5-task2}
 ## TASK: Your second graph
+gapminder %>% 
+  group_by(year) %>% 
+  summarize(avg_lifeExp = mean(lifeExp)) %>% 
+  ggplot(aes(year, avg_lifeExp)) +
+  geom_line()
 ```
 
-- (Your notes and observations here)
+-   When looking at an average of data across the entire world, life expectancy has increased every year that the survey was conducted.
+-   The life expectancy has increased fairly linearly year over year from 1952 until 1990, where it has fluctuated slightly more since.
+-   The raw increase in average life expectancy is roughly 20 years from 1952 to 2007.
 
 ```{r q5-task3}
 ## TASK: Your third graph
+gapminder %>% 
+  filter(year == year_max) %>% 
+  ggplot(aes(gdpPercap, lifeExp, color = continent)) +
+  geom_point()
 ```
 
-- (Your notes and observations here)
-
-
+-   (Your notes and observations here)
+-   For this visualization, I wanted to compare the relationship between GDP per capita and the life expectancy of a country. Additionally, I added in the content to see what groups existed here.
+-   I choose to use only the most recent year given it would contain the most medical advancements.
+-   Overall, there is a trend of increasing life expectancy with increasing GDP per capita. However, the most important feature of this visualization are:
+    -   The dramatically lower, and varying, life expectantcies in Africa, which are much more widely varying and low than those of other continents. This suggests that there are other factors unique to Africa other than GDP that is causing lower life expectancy other than strictly economic conditions indicated by the GDP.
+    -   After \$5000 of GDP per capita, the dramatic gains are reduced to very gradual or no gains and most values sit between 70-75 years old. There is another jump at \$20,000 GDP per capita to the 75-low 80s range.
+-   Overall, I would like to look at more data around the life expectancy to determine if there is a clearer economic correlation. I would like to look at data describing the causes of death in each country and the ratio of deaths that are caused by "preventable" diseases.
