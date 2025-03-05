@@ -56,7 +56,7 @@ Now that we've jittered the data, we can see little "clusters" of points where w
 
 To overcome this, we can adjust the level of jittering in the horizontal and vertical directions. Since we know that `hwy` values are integers only, we can add a small jittering in the vertical direction only, and easily remember that the vertical jitter isn't actually in the data.
 
-### __q1__ Adjust the jitter
+### **q1** Adjust the jitter
 
 Modify the code below to adjust the jittering to be 0 in the horizontal direction.
 
@@ -110,7 +110,7 @@ mpg %>%
 
 In the plot above, we're getting a misleading impression of the data, again due to overplotting.
 
-### __q2__ Add color to a jittered scatterplot
+### **q2** Add color to a jittered scatterplot
 
 ```{r q2-task}
 ## TASK: Color each point by vehicle `class`
@@ -167,7 +167,7 @@ ggplot(mpg, aes(x = displ)) +
 
 Later, we'll learn more concise ways to construct graphs like the one above. But for now, we'll practice using layers to add more information to scatterplots.
 
-### __q3__ Add a label layer
+### **q3** Add a label layer
 
 Add non-overlapping labels to the following scattterplot using the provided `df_annotate`.
 
@@ -190,7 +190,7 @@ mpg %>%
   geom_point(aes(color = class))
 ```
 
-### __q4__ Interpret a scatterplot
+### **q4** Interpret a scatterplot
 
 Study the following scatterplot: Note whether city (`cty`) or highway (`hwy`) mileage tends to be greater.
 
@@ -207,16 +207,16 @@ mpg %>%
   )
 ```
 
-**Observations**:
-- Which tends to be larger? `cty` or `hwy` mileage?
-- What is the trend of mileage with `displ`?
+**Observations**: - Which tends to be larger? `cty` or `hwy` mileage? - What is the trend of mileage with `displ`?
 
 ## Aside: Scatterplot vs bar chart
+
 <!-- -------------------------------------------------- -->
 
 Why use a scatterplot vs a bar chart? A bar chart is useful for emphasizing some *threshold*. Let's look at a few examples:
 
 ## Raw populations
+
 <!-- ------------------------- -->
 
 Two visuals of the same data:
@@ -240,6 +240,7 @@ economics %>%
 Here's we're not emphasizing zero; the scale is adjusted to emphasize the trend in the data.
 
 ## Population changes
+
 <!-- ------------------------- -->
 
 Two visuals of the same data:
@@ -267,7 +268,9 @@ Here we're not emphasizing zero; we can easily see the outlier month, but we hav
 For more, see [Bars vs Dots](https://dcl-data-vis.stanford.edu/discrete-continuous.html#bars-vs.-dots).
 
 <!-- include-exit-ticket -->
+
 # Exit Ticket
+
 <!-- -------------------------------------------------- -->
 
 Once you have completed this exercise, make sure to fill out the **exit ticket survey**, [linked here](https://docs.google.com/forms/d/e/1FAIpQLSeuq2LFIwWcm05e8-JU84A3irdEL7JkXhMq5Xtoalib36LFHw/viewform?usp=pp_url&entry.693978880=e-vis04-scatterplot-assignment.Rmd).
