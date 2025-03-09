@@ -1,6 +1,6 @@
 ---
 title: "Antibiotics"
-author: "(Your name here)"
+author: "Carter Harris"
 date: 2020-
 output:
   github_document
@@ -15,17 +15,20 @@ In this challenge, you will practice *iterating* on data visualization, and will
 *Note*: Please complete your initial visual design **alone**. Work on both of your graphs alone, and save a version to your repo *before* coming together with your team. This way you can all bring a diversity of ideas to the table!
 
 <!-- include-rubric -->
+
 # Grading Rubric
+
 <!-- -------------------------------------------------- -->
 
 Unlike exercises, **challenges will be graded**. The following rubrics define how you will be graded, both on an individual and team basis.
 
 ## Individual
+
 <!-- ------------------------- -->
 
 | Category | Needs Improvement | Satisfactory |
-|----------|----------------|--------------|
-| Effort | Some task __q__'s left unattempted | All task __q__'s attempted |
+|-------------------|-----------------------------|-------------------------|
+| Effort | Some task **q**'s left unattempted | All task **q**'s attempted |
 | Observed | Did not document observations, or observations incorrect | Documented correct observations based on analysis |
 | Supported | Some observations not clearly supported by analysis | All observations clearly supported by analysis (table, graph, etc.) |
 | Assessed | Observations include claims not supported by the data, or reflect a level of certainty not warranted by the data | Observations are appropriately qualified by the quality & relevance of the data and (in)conclusiveness of the support |
@@ -33,10 +36,10 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 | Code Styled | Violations of the [style guide](https://style.tidyverse.org/) hinder readability | Code sufficiently close to the [style guide](https://style.tidyverse.org/) |
 
 ## Submission
+
 <!-- ------------------------- -->
 
 Make sure to commit both the challenge report (`report.md` file) and supporting files (`report_files/` folder) when you are done! Then submit a link to Canvas. **Your Challenge submission is not complete without all files uploaded to GitHub.**
-
 
 ```{r setup}
 library(tidyverse)
@@ -58,9 +61,10 @@ df_antibiotics %>% knitr::kable()
 ```
 
 # Visualization
+
 <!-- -------------------------------------------------- -->
 
-### __q1__ Prototype 5 visuals
+### **q1** Prototype 5 visuals
 
 To start, construct **5 qualitatively different visualizations of the data** `df_antibiotics`. These **cannot** be simple variations on the same graph; for instance, if two of your visuals could be made identical by calling `coord_flip()`, then these are *not* qualitatively different.
 
@@ -76,6 +80,20 @@ In this visual you must show *all three* effectiveness values for *all 16 bacter
 
 ```{r q1.1}
 # WRITE YOUR CODE HERE
+df_antibiotics_long <-
+  df_antibiotics %>% 
+  pivot_longer(
+    cols = c(penicillin, streptomycin, neomycin),
+    names_to = "drug",
+    values_to = "mic"
+  )
+
+df_antibiotics_long
+
+df_antibiotics_long %>% 
+  ggplot(aes(bacteria, log10(mic), fill = drug, color = gram)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_col(position = "dodge")
 ```
 
 #### Visual 2 (All variables)
@@ -86,7 +104,22 @@ Note that your visual must be *qualitatively different* from *all* of your other
 
 ```{r q1.2}
 # WRITE YOUR CODE HERE
+df_antibiotics_long %>% 
+  ggplot(aes(drug, mic, color = gram)) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1), aspect.ratio = 1, strip.text = 
+    #element_text(size = 8),  # Increase facet label size
+    #plot.margin = margin(10, 10, 10, 10)) +
+  ) +
+  geom_point(alpha = 0.6) +
+  facet_wrap(vars(bacteria), scales = "free_y")
+  
+#ggsave("test_plot.png", width = 12, height = 10)
 ```
+
+Note that the above plot doesn't show the complete dataset very nicely in an R notebook. As such, a saved copy of the file with corrected widths is embedded below:
+
+![](c05-viz2.png)\
 
 #### Visual 3 (Some variables)
 
@@ -96,6 +129,11 @@ Note that your visual must be *qualitatively different* from *all* of your other
 
 ```{r q1.3}
 # WRITE YOUR CODE HERE
+df_antibiotics_long %>% 
+  ggplot(aes(bacteria, drug, fill = log10(mic), color = gram)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_tile(size = 0.5)
+
 ```
 
 #### Visual 4 (Some variables)
@@ -106,6 +144,12 @@ Note that your visual must be *qualitatively different* from *all* of your other
 
 ```{r q1.4}
 # WRITE YOUR CODE HERE
+df_antibiotics_long %>% 
+  # group_by(bacteria) %>% 
+  # mutate(mean_mic = log10(mean(mic))) %>% 
+  ggplot(aes(bacteria, log10(mic), fill = gram)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_boxplot()
 ```
 
 #### Visual 5 (Some variables)
@@ -116,9 +160,15 @@ Note that your visual must be *qualitatively different* from *all* of your other
 
 ```{r q1.5}
 # WRITE YOUR CODE HERE
+df_antibiotics_long %>%
+  group_by(bacteria) %>% 
+  mutate(mean_mic = mean(mic)) %>% 
+  ggplot(aes(bacteria, log10(mean_mic))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_col()
 ```
 
-### __q2__ Assess your visuals
+### **q2** Assess your visuals
 
 There are **two questions** below; use your five visuals to help answer both Guiding Questions. Note that you must also identify which of your five visuals were most helpful in answering the questions.
 
@@ -131,29 +181,53 @@ There are **two questions** below; use your five visuals to help answer both Gui
 > How do the three antibiotics vary in their effectiveness against bacteria of different genera and Gram stain?
 
 *Observations*
-- What is your response to the question above?
-  - (Write your response here)
-- Which of your visuals above (1 through 5) is **most effective** at helping to answer this question?
-  - (Write your response here)
-- Why?
-  - (Write your response here)
+
+-    What is your response to the question above?
+
+    -   First, looking at the Gram stain:
+
+        -   As an aggregate, Gram stain negative bacteria tend to be more resistant to all three bacteria types than Gram stain positive, with penicillin having a particularly huge outlier MIC value and being very ineffective at treating Gram stain positive bacteria. However, neomycin is the most effective for Gram stain negative.
+
+        -   For all Gram stain positive bacteria, either neomycin or pencillin are the best choices with the lowest MIC value. Streptomycin tends to be much less effective against this bacteria.
+
+    -   Looking at different genera:
+
+        -   Penicillin is often the best choice for streptococcus bacteria, although this is not always the case, as streptococcus fecalis is a notable outlier.
+
+        -   Staphylcoccus and samonella genera are usually best treated by neomycin.
+
+-   \- Which of your visuals above (1 through 5) is **most effective** at helping to answer this question?
+
+    -   I found a combination of my second and third visual the most effective at answering this question.
+
+-   \- Why?
+
+    -   Visual 3 was particularly helpful for providing a side-by side comparison of each bacteria to find common pattern on a common scale. However, the color hue used limited the precision of values I was able to view. To fill this gap, I referred back to visual 2 after finding a pattern to confirm results. Having each plot on an independent axis was much easier compared to the log plot, which with positive and negative values and the huge variation in MIC value ranges, was slightly difficult to read. The common x-axis between graphs was also particularly helpful for identifying patterns.
 
 #### Guiding Question 2
 
 In 1974 *Diplococcus pneumoniae* was renamed *Streptococcus pneumoniae*, and in 1984 *Streptococcus fecalis* was renamed *Enterococcus fecalis* [2].
 
-> Why was *Diplococcus pneumoniae* was renamed *Streptococcus pneumoniae*?
+> Why was *Diplococcus pneumoniae* renamed *Streptococcus pneumoniae*?
 
 *Observations*
-- What is your response to the question above?
-  - (Write your response here)
-- Which of your visuals above (1 through 5) is **most effective** at helping to answer this question?
-  - (Write your response here)
-- Why?
-  - (Write your response here)
 
+-   What is your response to the question above?
+
+    -   The renamed Streptococcus pneumonia responds to antibiotics in much the same way as other members of the streptococcus genera with penicillin being very effective and both other antibiotics tested, neomycin and strepomycin, being fairly ineffective.
+
+    -   Streptococcus fecalis was likely renamed as it is an outlier in the streptococcus genera in terms of its antibiotics response. It can not be treated with penicillin as the other genera members can and is instead best treated by neomycin.
+
+-   Which of your visuals above (1 through 5) is **most effective** at helping to answer this question?
+
+    -   Visual 2 was once again the most helpful, although visual 3 was less helpful for this more specific comparison.
+
+-   Why?
+
+    -   Visual 2 provided a clear side by side of each bacteria that quickly provided pattern recognition, like that of streptococcus' simialr reactions to pencillin and the other antibiotics.
 
 # References
+
 <!-- -------------------------------------------------- -->
 
 [1] Neomycin in skin infections: A new topical antibiotic with wide antibacterial range and rarely sensitizing. Scope. 1951;3(5):4-7.
