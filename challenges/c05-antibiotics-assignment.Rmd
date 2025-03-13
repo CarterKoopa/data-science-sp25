@@ -182,7 +182,7 @@ There are **two questions** below; use your five visuals to help answer both Gui
 
 *Observations*
 
--    What is your response to the question above?
+-   What is your response to the question above?
 
     -   First, looking at the Gram stain:
 
@@ -196,11 +196,11 @@ There are **two questions** below; use your five visuals to help answer both Gui
 
         -   Staphylcoccus and samonella genera are usually best treated by neomycin.
 
--   \- Which of your visuals above (1 through 5) is **most effective** at helping to answer this question?
+-   Which of your visuals above (1 through 5) is **most effective** at helping to answer this question?
 
     -   I found a combination of my second and third visual the most effective at answering this question.
 
--   \- Why?
+-   Why?
 
     -   Visual 3 was particularly helpful for providing a side-by side comparison of each bacteria to find common pattern on a common scale. However, the color hue used limited the precision of values I was able to view. To fill this gap, I referred back to visual 2 after finding a pattern to confirm results. Having each plot on an independent axis was much easier compared to the log plot, which with positive and negative values and the huge variation in MIC value ranges, was slightly difficult to read. The common x-axis between graphs was also particularly helpful for identifying patterns.
 
