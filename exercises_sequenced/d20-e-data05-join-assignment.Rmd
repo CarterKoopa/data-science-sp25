@@ -9,8 +9,7 @@ reading: 0
 
 *Purpose*: Often our data are scattered across multiple sets. In this case, we need to be able to *join* data.
 
-*Reading*: (None, this is the reading)
-*Topics*: Welcome, mutating joins, filtering joins, Binds and set operations
+*Reading*: (None, this is the reading) *Topics*: Welcome, mutating joins, filtering joins, Binds and set operations
 
 ```{r setup, include=FALSE}
 # knitr options
@@ -26,12 +25,12 @@ library(nycflights13)
 
 Frequently, the data we need for an analysis is scattered across multiple datasets. In that case, we need tools to *combine* data sets. In R there are two classes of data-combiners:
 
-- *Binding* is a "dumb" way to combine datasets: When binding we have to be very careful to combine the right rows and columns.
-- *Joining* is a smarter way to combine datasets. We provide certain shared variables (*join keys*) to join the correct rows.
+-   *Binding* is a "dumb" way to combine datasets: When binding we have to be very careful to combine the right rows and columns.
+-   *Joining* is a smarter way to combine datasets. We provide certain shared variables (*join keys*) to join the correct rows.
 
 ### Dangers of Binding!
 
-As noted above, binding is a "dumb" way to combine data. 
+As noted above, binding is a "dumb" way to combine data.
 
 Let's look at an example using `bind_columns`. This will take two datasets and "glue" them together in whatever order the happened to be arranged in.
 
@@ -58,13 +57,13 @@ beatles2 <-
 bind_cols(beatles1, beatles2)
 ```
 
-### __q1__ Diagnose an issue
+### **q1** Diagnose an issue
 
 Describe what is wrong with the result of `bind_cols` above and how it happened.
 
 *Hint*: John Lennon played guitar in The Beatles. John McCartney is not a real person... (as far as I know).
 
-- Write your answer here
+-   When binding two sets, the columns and rows are not nessesarily in the right order. This can result in combinations and correlation implied that don't actually exist.
 
 ## Joining data
 
@@ -107,14 +106,15 @@ beatles3 <-
   )
 ```
 
-### __q2__ Use the following `beatles3` to *correctly* join `beatles1`
+### **q2** Use the following `beatles3` to *correctly* join `beatles1`
 
 *Hint*: You will need to use two join functions to complete this task.
 
 ```{r q2-task}
 df_q2 <-
 ## TODO: Join beatles1 and beatles2 using beatles3 to match rows
-
+  inner_join(beatles2, beatles3, by = c("surname")) %>% 
+  inner_join(beatles1, by = c("name"))
 df_q2
 ```
 
@@ -146,16 +146,16 @@ There are two primary classes of joints: *mutating joins* and *filter joins*.
 
 *Mutating joins* modify (or "mutate") the data. There are four primary mutating joins to consider:
 
-- `left_join(df_A, df_B)`: This preserves all rows in `df_A`, and only those in `df_B` that have a match
+-   `left_join(df_A, df_B)`: This preserves all rows in `df_A`, and only those in `df_B` that have a match
 
 ![](./images/join_left.png)
 
-- `right_join(df_A, df_B)`: This preserves all rows in `df_B`, and only those in `df_A` that have a match
-- `inner_join(df_A, df_B)`: This preserves only those rows that have a match between `df_A` and `df_B`
+-   `right_join(df_A, df_B)`: This preserves all rows in `df_B`, and only those in `df_A` that have a match
+-   `inner_join(df_A, df_B)`: This preserves only those rows that have a match between `df_A` and `df_B`
 
 ![](./images/join_inner.png)
 
-- `full_join(df_A, df_B)`: This preserves all rows in `df_A` and all rows in `df_B`, regardless of matches.
+-   `full_join(df_A, df_B)`: This preserves all rows in `df_A` and all rows in `df_B`, regardless of matches.
 
 ![](./images/join_outer.png)
 
@@ -163,9 +163,9 @@ There are two primary classes of joints: *mutating joins* and *filter joins*.
 
 Here are a few tips to help with selecting the appropriate join:
 
-- *To preserve as many rows as possible*, use a `full_join()`
-- *To ensure only valid matches*, use an `inner_join()`
-- *To add information to a dataset `df_main`*, use `left_join(df_main, df_extra)`
+-   *To preserve as many rows as possible*, use a `full_join()`
+-   *To ensure only valid matches*, use an `inner_join()`
+-   *To add information to a dataset `df_main`*, use `left_join(df_main, df_extra)`
 
 ### Keys with different names
 
@@ -190,8 +190,7 @@ flights %>%
   )
 ```
 
-
-### __q3__ Add the airport name
+### **q3** Add the airport name
 
 Complete the code below by using an appropriate join to add the airport name to the `flights` dataset.
 
@@ -203,21 +202,21 @@ flights %>%
   left_join(
     airports %>% select(faa, name),
     ## TODO: Select the correct join keys
+    by = c("dest" = "faa")
   ) %>% 
   select(flight, dest, name, everything())
 ```
-
 
 ### Filtering joins
 
 Unlike a mutating join, a *filtering join* only filters rows---it doesn't modify values or add any new columns. There are two filter joins:
 
-- `semi_join(df_main, df_criteria)`: Returns those rows in `df_main` that have a match in `df_criteria`
-- `anti_join(df_main, df_criteria)`: Returns those rows in `df_main` that *do not* have a match in `df_criteria`
+-   `semi_join(df_main, df_criteria)`: Returns those rows in `df_main` that have a match in `df_criteria`
+-   `anti_join(df_main, df_criteria)`: Returns those rows in `df_main` that *do not* have a match in `df_criteria`
 
 Filtering joins are an elegant way to produce complicated filters. They are especially helpful because you can first inspect what *criteria* you'll filter on, then perform the filter. We'll use the tidyr tool `expand_grid` to make such a criteria dataframe, then apply it to filter the `flights` data.
 
-### __q4__ Create a "grid" of values
+### **q4** Create a "grid" of values
 
 Use `expand_grid` to create a `criteria` dataframe with the `month` equal to `8, 9` and the airport identifiers in `dest` for the San Francisco, San Jose, and Oakland airports. We'll use this in q4 for a filter join.
 
@@ -228,7 +227,10 @@ Use `expand_grid` to create a `criteria` dataframe with the `month` equal to `8,
 ```{r q4-task}
 criteria <-
 ## TODO: Use expand_grid to create a criteria dataframe
-
+  expand_grid(
+    month = 8:9,
+    dest = c("SFO", "SJC", "OAK")
+  )
 criteria
 ```
 
@@ -262,7 +264,7 @@ assertthat::assert_that(
 print("Well done!")
 ```
 
-### __q5__ Filter with your `criteria`
+### **q5** Filter with your `criteria`
 
 Use the `criteria` dataframe you produced above to filter `flights` on `dest` and `month`.
 
@@ -272,7 +274,7 @@ Use the `criteria` dataframe you produced above to filter `flights` on `dest` an
 df_q5 <-
   flights %>%
 ## TODO: Use expand_grid to create a criteria dataframe
-
+  semi_join(criteria)
 df_q5
 ```
 
@@ -295,7 +297,9 @@ print("Nice!")
 ```
 
 <!-- include-exit-ticket -->
+
 # Exit Ticket
+
 <!-- -------------------------------------------------- -->
 
 Once you have completed this exercise, make sure to fill out the **exit ticket survey**, [linked here](https://docs.google.com/forms/d/e/1FAIpQLSeuq2LFIwWcm05e8-JU84A3irdEL7JkXhMq5Xtoalib36LFHw/viewform?usp=pp_url&entry.693978880=e-data05-join-assignment.Rmd).

@@ -67,8 +67,8 @@ Modify the code below to adjust the jittering to be 0 in the horizontal directio
 mpg %>% 
   ggplot(mapping = aes(x = displ, y = hwy)) +
   geom_jitter(
-    # width = 0.2,
-    # height = 0.2,
+     width = 0,
+     height = 0.2,
   )
 ```
 
@@ -118,6 +118,7 @@ mpg %>%
   ggplot(mapping = aes(
     x = displ,
     y = hwy,
+    color = class
   )) +
   geom_jitter(width = 0.1, height = 0.5)
 ```
@@ -176,6 +177,8 @@ Add non-overlapping labels to the following scattterplot using the provided `df_
 *Hint 2*: You'll have to use the `data` keyword to override the data layer!
 
 ```{r q3-task}
+library(ggrepel)
+
 ## TODO: Use df_annotate below to add text labels to the scatterplot
 df_annotate <-
   mpg %>%
@@ -187,7 +190,11 @@ df_annotate <-
 
 mpg %>%
   ggplot(aes(displ, hwy)) +
-  geom_point(aes(color = class))
+  geom_point(aes(color = class)) +
+  geom_label_repel(
+    data = df_annotate,
+    aes(label = class, fill = class)
+  )
 ```
 
 ### **q4** Interpret a scatterplot
@@ -208,6 +215,8 @@ mpg %>%
 ```
 
 **Observations**: - Which tends to be larger? `cty` or `hwy` mileage? - What is the trend of mileage with `displ`?
+
+-   Highway mileage does tend to be higher. Further, mileage appears to decrease with increasing engine displacement.
 
 ## Aside: Scatterplot vs bar chart
 
@@ -266,6 +275,8 @@ economics %>%
 Here we're not emphasizing zero; we can easily see the outlier month, but we have to read the axis to see that this is a case of negative growth.
 
 For more, see [Bars vs Dots](https://dcl-data-vis.stanford.edu/discrete-continuous.html#bars-vs.-dots).
+
+Summary: bars emphasize zero, points emphasize data that doesn't start at zero
 
 <!-- include-exit-ticket -->
 
