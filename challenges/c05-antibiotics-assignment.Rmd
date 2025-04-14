@@ -1,7 +1,7 @@
 ---
 title: "Antibiotics"
 author: "Carter Harris"
-date: 2020-
+date: 2025-04-14
 output:
   github_document
 ---
@@ -27,7 +27,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category | Needs Improvement | Satisfactory |
-|-------------------|-----------------------------|-------------------------|
+|------------------------|------------------------|------------------------|
 | Effort | Some task **q**'s left unattempted | All task **q**'s attempted |
 | Observed | Did not document observations, or observations incorrect | Documented correct observations based on analysis |
 | Supported | Some observations not clearly supported by analysis | All observations clearly supported by analysis (table, graph, etc.) |
@@ -86,14 +86,17 @@ df_antibiotics_long <-
     cols = c(penicillin, streptomycin, neomycin),
     names_to = "drug",
     values_to = "mic"
-  )
+  ) %>% 
+  mutate(bacteria = fct_reorder(bacteria, mic))
 
 df_antibiotics_long
 
 df_antibiotics_long %>% 
   ggplot(aes(bacteria, log10(mic), fill = drug, color = gram)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_col(position = "dodge")
+  geom_col(position = "dodge") +
+  scale_color_manual(values = c("negative" = "black", "positive" = "white"))
+  #facet_wrap(~gram, scales = "free_x")
 ```
 
 #### Visual 2 (All variables)
@@ -102,7 +105,7 @@ In this visual you must show *all three* effectiveness values for *all 16 bacter
 
 Note that your visual must be *qualitatively different* from *all* of your other visuals.
 
-```{r q1.2}
+```{r q1.2, fig.width=12, fig.height=10}
 # WRITE YOUR CODE HERE
 df_antibiotics_long %>% 
   ggplot(aes(drug, mic, color = gram)) +
@@ -114,12 +117,8 @@ df_antibiotics_long %>%
   geom_point(alpha = 0.6) +
   facet_wrap(vars(bacteria), scales = "free_y")
   
-#ggsave("test_plot.png", width = 12, height = 10)
+#ggsave("test_plot.png", width = 12, height = 10) 
 ```
-
-Note that the above plot doesn't show the complete dataset very nicely in an R notebook. As such, a saved copy of the file with corrected widths is embedded below:
-
-![](c05-viz2.png)\
 
 #### Visual 3 (Some variables)
 
@@ -130,10 +129,10 @@ Note that your visual must be *qualitatively different* from *all* of your other
 ```{r q1.3}
 # WRITE YOUR CODE HERE
 df_antibiotics_long %>% 
-  ggplot(aes(bacteria, drug, fill = log10(mic), color = gram)) +
+  ggplot(aes(bacteria, drug, fill = log10(mic))) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_tile(size = 0.5)
-
+  geom_tile(size = 0.5) +
+  facet_wrap(~gram, scales = "free_x")
 ```
 
 #### Visual 4 (Some variables)
@@ -161,11 +160,10 @@ Note that your visual must be *qualitatively different* from *all* of your other
 ```{r q1.5}
 # WRITE YOUR CODE HERE
 df_antibiotics_long %>%
-  group_by(bacteria) %>% 
-  mutate(mean_mic = mean(mic)) %>% 
-  ggplot(aes(bacteria, log10(mean_mic))) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_col()
+  #group_by(gram) %>% 
+  #mutate(mean_mic = mean(mic)) %>% 
+  ggplot(aes(gram, log10(mic))) +
+  geom_boxplot()
 ```
 
 ### **q2** Assess your visuals
@@ -198,11 +196,12 @@ There are **two questions** below; use your five visuals to help answer both Gui
 
 -   Which of your visuals above (1 through 5) is **most effective** at helping to answer this question?
 
-    -   I found a combination of my second and third visual the most effective at answering this question.
+    -   I found a combination of my second and third visual the most effective at answering this question. Visual 5 was also helpful for gram strain.
 
 -   Why?
 
     -   Visual 3 was particularly helpful for providing a side-by side comparison of each bacteria to find common pattern on a common scale. However, the color hue used limited the precision of values I was able to view. To fill this gap, I referred back to visual 2 after finding a pattern to confirm results. Having each plot on an independent axis was much easier compared to the log plot, which with positive and negative values and the huge variation in MIC value ranges, was slightly difficult to read. The common x-axis between graphs was also particularly helpful for identifying patterns.
+    -   Visual 5 was helpful by showcasing aggregate trends across the gram data.
 
 #### Guiding Question 2
 

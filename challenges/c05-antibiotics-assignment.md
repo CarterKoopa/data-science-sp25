@@ -1,7 +1,7 @@
 Antibiotics
 ================
 Carter Harris
-2020-
+2025-04-14
 
 *Purpose*: Creating effective data visualizations is an *iterative*
 process; very rarely will the first graph you make be the most
@@ -163,14 +163,15 @@ df_antibiotics_long <-
     cols = c(penicillin, streptomycin, neomycin),
     names_to = "drug",
     values_to = "mic"
-  )
+  ) %>% 
+  mutate(bacteria = fct_reorder(bacteria, mic))
 
 df_antibiotics_long
 ```
 
     ## # A tibble: 48 × 4
     ##    bacteria              gram     drug             mic
-    ##    <chr>                 <chr>    <chr>          <dbl>
+    ##    <fct>                 <chr>    <chr>          <dbl>
     ##  1 Aerobacter aerogenes  negative penicillin   870    
     ##  2 Aerobacter aerogenes  negative streptomycin   1    
     ##  3 Aerobacter aerogenes  negative neomycin       1.6  
@@ -187,10 +188,15 @@ df_antibiotics_long
 df_antibiotics_long %>% 
   ggplot(aes(bacteria, log10(mic), fill = drug, color = gram)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_col(position = "dodge")
+  geom_col(position = "dodge") +
+  scale_color_manual(values = c("negative" = "black", "positive" = "white"))
 ```
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.1-1.png)<!-- -->
+
+``` r
+  #facet_wrap(~gram, scales = "free_x")
+```
 
 #### Visual 2 (All variables)
 
@@ -218,14 +224,8 @@ df_antibiotics_long %>%
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.2-1.png)<!-- -->
 
 ``` r
-#ggsave("test_plot.png", width = 12, height = 10)
+#ggsave("test_plot.png", width = 12, height = 10) 
 ```
-
-Note that the above plot doesn’t show the complete dataset very nicely
-in an R notebook. As such, a saved copy of the file with corrected
-widths is embedded below:
-
-![](c05-viz2.png)  
 
 #### Visual 3 (Some variables)
 
@@ -239,9 +239,10 @@ your other visuals.
 ``` r
 # WRITE YOUR CODE HERE
 df_antibiotics_long %>% 
-  ggplot(aes(bacteria, drug, fill = log10(mic), color = gram)) +
+  ggplot(aes(bacteria, drug, fill = log10(mic))) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_tile(size = 0.5)
+  geom_tile(size = 0.5) +
+  facet_wrap(~gram, scales = "free_x")
 ```
 
     ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
@@ -285,11 +286,10 @@ your other visuals.
 ``` r
 # WRITE YOUR CODE HERE
 df_antibiotics_long %>%
-  group_by(bacteria) %>% 
-  mutate(mean_mic = mean(mic)) %>% 
-  ggplot(aes(bacteria, log10(mean_mic))) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_col()
+  #group_by(gram) %>% 
+  #mutate(mean_mic = mean(mic)) %>% 
+  ggplot(aes(gram, log10(mic))) +
+  geom_boxplot()
 ```
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.5-1.png)<!-- -->
@@ -342,7 +342,8 @@ opportunity to think about why this is.**
   helping to answer this question?
 
   - I found a combination of my second and third visual the most
-    effective at answering this question.
+    effective at answering this question. Visual 5 was also helpful for
+    gram strain.
 
 - Why?
 
@@ -356,6 +357,8 @@ opportunity to think about why this is.**
     value ranges, was slightly difficult to read. The common x-axis
     between graphs was also particularly helpful for identifying
     patterns.
+  - Visual 5 was helpful by showcasing aggregate trends across the gram
+    data.
 
 #### Guiding Question 2
 
