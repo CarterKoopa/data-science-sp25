@@ -252,8 +252,8 @@ Now that we've done the hard work of loading and wrangling the data, we can fina
 df_normalized <-
   df_data %>% 
   mutate(
-    cases_per100k = cases / (population / 100000),
-    deaths_per100k = deaths / (population / 100000)
+    cases_per100k = (cases / population) * 100000,
+    deaths_per100k = (deaths / population) * 100000
     )
 ```
 
