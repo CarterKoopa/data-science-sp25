@@ -1,7 +1,7 @@
 COVID-19
 ================
 Carter Harris
-2020-
+2025-04-14
 
 - [Grading Rubric](#grading-rubric)
   - [Individual](#individual)
@@ -323,7 +323,8 @@ the NYT data `df_covid` already contains the `fips`.
 ## TASK: Create a `fips` column by extracting the county code
 df_q3 <-
   df_pop %>% 
-  mutate(fips = substr(id, nchar(id) - 4, nchar(id)))
+  #mutate(fips = substr(id, nchar(id) - 4, nchar(id)))
+  mutate(fips = str_sub(id, -5))
 
 df_q3
 ```
@@ -486,8 +487,10 @@ data.
 ## TASK: Normalize cases and deaths
 df_normalized <-
   df_data %>% 
-  mutate(cases_per100k = cases / (population / 100000)) %>% 
-  mutate(deaths_per100k = deaths / (population / 100000))
+  mutate(
+    cases_per100k = cases / (population / 100000),
+    deaths_per100k = deaths / (population / 100000)
+    )
 ```
 
 You may use the following test to check your work.
@@ -707,6 +710,9 @@ df_normalized %>%
   highest deaths per capita occur in small counties. For cases, nearly
   all are \<10,000 people, with particularly strong outliers occuring
   for counties with \<100 people.
+- These counties with the highest number of cases/deaths have cases
+  counts that are 2-3 orders of magnitude higher and deaths at least an
+  order of a magnitude higher than the mean calculated in q6.
 - When did these “largest values” occur?
   - As discussed previously, the case count appears to count the total
     cases since the beginning of the pandemic. As such, the largest case
