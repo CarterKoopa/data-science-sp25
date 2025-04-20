@@ -22,6 +22,7 @@ library(broom)
 We'll look at two cases: First a simple problem studying polynomials, then a more realistic case using the `diamonds` dataset.
 
 ## Illustrative Case: Polynomial Regression
+
 <!-- -------------------------------------------------- -->
 
 To illustrate the ideas behind the test-validate framework, let's study a very simple problem: Fitting a polynomial. The following code sets up this example.
@@ -68,7 +69,7 @@ where the $\beta_i$ are coefficients, and $x^0 = 1$ is a constant.
 
 The following code fits a polynomial of degree 2 to the available data `df_measurements`.
 
-### __q1__ Run the following code and inspect the (visual) results. Describe whether the model (`Predicted`) captures the "trends" in the measured data (black dots).
+### **q1** Run the following code and inspect the (visual) results. Describe whether the model (`Predicted`) captures the "trends" in the measured data (black dots).
 
 ```{r q1-task}
 ## NOTE: No need to edit this code; run and inspect
@@ -95,8 +96,8 @@ df_truth %>%
 
 **Observations**:
 
-- Do the `Predicted` values capture the trend in the measurements?
-- Do the `Predicted` values capture the trend in the `True` function?
+-   Do the `Predicted` values capture the trend in the measurements?
+-   Do the `Predicted` values capture the trend in the `True` function?
 
 This phenomenon is called [*underfitting*](https://en.wikipedia.org/wiki/Overfitting#Underfitting): This is when the model is not "flexible" enough to capture trends observed in the data. We can increase the flexibility of the model by increasing the polynomial order, which we'll do below.
 
@@ -104,11 +105,16 @@ This phenomenon is called [*underfitting*](https://en.wikipedia.org/wiki/Overfit
 
 Let's increase the polynomial order and re-fit the data to try to solve the underfitting problem.
 
-### __q2__ Copy the code from above to fit a `degree = 17` polynomial to the measurements.
+### **q2** Copy the code from above to fit a `degree = 17` polynomial to the measurements.
 
 ```{r q2-task}
 ## TASK: Fit a high-degree polynomial to df_measurements
-fit_over <- NA
+fit_over <-
+  df_measurements %>%
+  lm(
+    data = .,
+    formula = y_meas ~ poly(x, degree = 17)
+  )
 
 ## NOTE: No need to modify code below
 y_limits <-
@@ -132,33 +138,38 @@ df_truth %>%
 
 **Observations**:
 
-- How well do the predictions hold *at* the measured points?
-- How well do the predictions hold *outside* the measured points?
+-   How well do the predictions hold *at* the measured points?
+-   How well do the predictions hold *outside* the measured points?
 
 The phenomenon we see with the high-degree case above is called [*overfitting*](https://en.wikipedia.org/wiki/Overfitting). Overfitting tends to occur when our model is "too flexible"; this excess flexibility allows the model to fit to extraneous patterns, such as measurement noise or data artifacts due to sampling.
 
 So we have a "Goldilocks" problem:
 
-- We need the model to be *flexible enough* to fit patterns in the data. (Avoid *underfitting*)
-- We need the model to be *not too flexible* so as not to fit to noise. (Avoid *overfitting*)
+-   We need the model to be *flexible enough* to fit patterns in the data. (Avoid *underfitting*)
+-   We need the model to be *not too flexible* so as not to fit to noise. (Avoid *overfitting*)
 
 Quantities such as polynomial order that control model flexibility are called [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)); essentially, these are parameters that are not set during the optimization we discussed in `e-stat11-models-intro`. We might choose to set hyperparameter values based on minimizing the model error.
 
 However, if we try to set the hyperparameters based on the *training error*, we're going to make some bad choices. The next task gives us a hint why.
 
-### __q3__ Compute the `mse` for the 2nd and high-degree polynomial models on `df_measurements`. Which model has the lower error? Which hyperparameter value (polynomial degree) would you choose, based *solely* on these numbers?
+### **q3** Compute the `mse` for the 2nd and high-degree polynomial models on `df_measurements`. Which model has the lower error? Which hyperparameter value (polynomial degree) would you choose, based *solely* on these numbers?
 
 *Hint*: We learned how to do this in `e-stat11-models-intro`.
 
 ```{r q3-task}
 # TASK: Compute the mse for fit_d2 and fit_over on df_measurements
+mse(fit_d2, df_measurements)
+mse(fit_over, df_measurements)
 ```
 
 **Observations**:
 
-- Which model---`fit_d2` or `fit_over`---has lower error on `df_measurements`?
-- Based *solely* on these results, which hyperparameter value (polynomial order) would you choose?
-- Would that be a good choice? Why or why not?
+-   Which model---`fit_d2` or `fit_over`---has lower error on `df_measurements`?
+    -   `fit_d2` is more accurate
+-   Based *solely* on these results, which hyperparameter value (polynomial order) would you choose?
+    -   I would chose a lower hyperparameter (in this case, degree 2). Ideally, something in the middle would be chosen, however.
+-   Would that be a good choice? Why or why not?
+    -   I mean given only these options, it would be a good choice. However, the model is still extremely inaccurate and would not result in any useable data.
 
 ## A Solution: Validation Data
 
@@ -199,9 +210,9 @@ df_truth %>%
 
 **Idea**:
 
-- Fit the model on the *training* data `df_train`.
-- Assess the model on *validation* data `df_validate`.
-- Use the assessment on validation data to choose the polynomial order.
+-   Fit the model on the *training* data `df_train`.
+-   Assess the model on *validation* data `df_validate`.
+-   Use the assessment on validation data to choose the polynomial order.
 
 The following code *sweeps* through different values of polynomial order, fits a polynomial, and computes the associated error on both the `Train` and `Validate` sets.
 
@@ -235,7 +246,7 @@ df_sweep <-
 
 In the next task, you will compare the resulting error metrics.
 
-### __q4__ Inspect the results of the degree sweep, and answer the questions below.
+### **q4** Inspect the results of the degree sweep, and answer the questions below.
 
 ```{r q4-task}
 ## NOTE: No need to edit; inspect and write your observations
@@ -256,20 +267,24 @@ df_sweep %>%
 
 **Observations**
 
-- Based on the `Train` error, which polynomial order would you pick?
-- Based on the `Validate` error, which polynomial order would you pick?
-- Which selection leads to the correct choice?
+-   Based on the `Train` error, which polynomial order would you pick?
+    -   Training error is minimized at quite a high order polynomial - although not on the graph, a value as high as 8 would make sense.
+-   Based on the `Validate` error, which polynomial order would you pick?
+    -   The error starts to increase again after an order of 3 or 4.
+-   Which selection leads to the correct choice?
+    -   The selection should be based off the validation error since this better represents the entire dataset.
 
 ## Intermediate Summary
 
 We've seen a few ideas:
 
-- A model that is *not flexible enough* will tend to *underfit* a dataset.
-- A model that is *too flexible* will tend to *overfit* a dataset.
-- The *training error* is an optimistic measure of accuracy, it is not an appropriate metric for setting hyperparameter values.
-- To set hyperparameter values, we are better off "holding out" a *validation set* from our data, and using the *validation error* to make model decisions.
+-   A model that is *not flexible enough* will tend to *underfit* a dataset.
+-   A model that is *too flexible* will tend to *overfit* a dataset.
+-   The *training error* is an optimistic measure of accuracy, it is not an appropriate metric for setting hyperparameter values.
+-   To set hyperparameter values, we are better off "holding out" a *validation set* from our data, and using the *validation error* to make model decisions.
 
 ## More Challenging Case: Modeling Diamond Prices
+
 <!-- -------------------------------------------------- -->
 
 Above we made our model more flexible by changing the polynomial order. For instance, a 2nd-order polynomial model would be
@@ -316,7 +331,7 @@ fit_full <-
   )
 ```
 
-### __q5__ Build your own model!
+### **q5** Build your own model!
 
 Choose which predictors to include by modifying the `formula` argument below. Use the validation data to help guide your choice. Answer the questions below.
 
@@ -337,15 +352,15 @@ mse(fit_full, diamonds_validate)
 
 **Observations**:
 
-- Which predictors did you find were helpful for predicting the `price`?
-- Why do you think those predictors are informative?
-- Why might the uninformative predictors not be helpful?
+-   Which predictors did you find were helpful for predicting the `price`?
+-   Why do you think those predictors are informative?
+-   Why might the uninformative predictors not be helpful?
 
 *Aside*: The process of choosing predictors---sometimes called *features*---is called [feature selection](https://en.wikipedia.org/wiki/Feature_selection).
 
 One last thing: Note above that I first *randomized* the diamonds before selecting training and validation data. *This is really important!* Let's see what happens if we *don't randomize* the data before splitting:
 
-### __q6__ Visualize a histogram for the prices of `diamonds_train_bad` and `diamonds_validate_bad`. Answer the questions below.
+### **q6** Visualize a histogram for the prices of `diamonds_train_bad` and `diamonds_validate_bad`. Answer the questions below.
 
 ```{r q6-task}
 ## NOTE: No need to edit this part
@@ -362,11 +377,13 @@ diamonds_validate_bad <-
 
 **Observations**:
 
-- How do the Train and Validate sets compare? Are they similar in shape?
-- What effect would it have to train on `diamonds_test_bad` and then predict on `diamonds_validate_bad`?
+-   How do the Train and Validate sets compare? Are they similar in shape?
+-   What effect would it have to train on `diamonds_test_bad` and then predict on `diamonds_validate_bad`?
 
 <!-- include-exit-ticket -->
+
 # Exit Ticket
+
 <!-- -------------------------------------------------- -->
 
 Once you have completed this exercise, make sure to fill out the **exit ticket survey**, [linked here](https://docs.google.com/forms/d/e/1FAIpQLSeuq2LFIwWcm05e8-JU84A3irdEL7JkXhMq5Xtoalib36LFHw/viewform?usp=pp_url&entry.693978880=e-model02-train-validate-assignment.Rmd).
