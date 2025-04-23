@@ -562,7 +562,7 @@ prevalence of that name. Answer the questions below.
 # TASK: Complete the code below to compute a bootstrap-based confidence interval
 df_interval_bootstrap <- 
   df_sample_random %>% 
-  bootstraps(., times = 1000) %>% 
+  bootstraps(., times = 10000) %>% 
   mutate(
     estimate = map(
       splits,
@@ -578,30 +578,25 @@ df_interval_bootstrap <-
   ## NOTE: No need to edit this line; this uses your bootstrap sample to compute
   # a confidence `int`erval using the percentile method
   int_pctl(., estimate)
-```
 
-    ## Warning: Recommend at least 1000 non-missing bootstrap resamples for term
-    ## `prevalence`.
-
-``` r
 df_interval_bootstrap 
 ```
 
     ## # A tibble: 1 × 6
     ##   term       .lower .estimate .upper .alpha .method   
     ##   <chr>       <dbl>     <dbl>  <dbl>  <dbl> <chr>     
-    ## 1 prevalence 0.0175    0.0727  0.143   0.05 percentile
+    ## 1 prevalence 0.0175    0.0714  0.140   0.05 percentile
 
 **Observations**:
 
 - What is highest possible prevalence for your chosen name, based on the
   confidence interval you constructed?
-  - The highest possible prevalence is 0.1551.
+  - The highest possible prevalence is 0.1404.
 - Note that we used the *random* sample with the bootstrap procedure in
   this task. Could we use the bootstrap to make a confidence interval
   using the sequential sample (`df_sample_seq`) that would be
   representative of all of Helvig? Why or why not?
-  - No
+  - No.
   - Ultimately, however you mutate this sample data, you can not remove
     the in-built bias from having collected biased data in the first
     place. The influence of all houses being close together (such as
