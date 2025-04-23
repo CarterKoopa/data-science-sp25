@@ -131,10 +131,12 @@ you still need to count, because your numbers *will* be different!
     (97% rounded) of homes are occupied.
 - Are there any sources of *real* uncertainty in the percent occupied
   you calculated?
-  - I don’t believe there are any sources of real uncertainty in the
-    percent occupied. Houses are either occupied or they are not, and
-    hypothetically, The Islands shows an accurate depiction of the true
-    occupancy state of each house.
+  - While I don’t believe there is real uncertainty at the moment of
+    calculation - houses are either occupied or are not - the islands is
+    a dynamic situation where islanders can move at will. As such, it is
+    quite possible that by the time I finished counting, or several days
+    later, islanders have moved and introduced real uncertainty into the
+    calculated percent occupied.
 - Are there any sources of *erroneous* uncertainty in the percent
   occupied you calculated?
   - Given that I counted all of the houses manually, it is possible that
@@ -203,28 +205,26 @@ df_q3 <-
   ## TODO: Complete this code
   mutate(last_name = str_extract(name, pattern = "\\b\\w+$")) %>% 
   group_by(last_name) %>% 
-  summarise(
-    n = n(),
-    p = n / n()
-    ) %>% 
+  summarise(n = n()) %>% 
+  mutate(p = n / sum(n)) %>% 
   arrange(desc(n))
 
 df_q3
 ```
 
     ## # A tibble: 28 × 3
-    ##    last_name     n     p
-    ##    <chr>     <int> <dbl>
-    ##  1 Sorensen      8     1
-    ##  2 Lund          6     1
-    ##  3 Solberg       5     1
-    ##  4 Eklund        4     1
-    ##  5 Blomgren      3     1
-    ##  6 Carlsen       3     1
-    ##  7 Jansen        3     1
-    ##  8 Morris        3     1
-    ##  9 Banerjee      2     1
-    ## 10 Chunduri      2     1
+    ##    last_name     n      p
+    ##    <chr>     <int>  <dbl>
+    ##  1 Sorensen      8 0.127 
+    ##  2 Lund          6 0.0952
+    ##  3 Solberg       5 0.0794
+    ##  4 Eklund        4 0.0635
+    ##  5 Blomgren      3 0.0476
+    ##  6 Carlsen       3 0.0476
+    ##  7 Jansen        3 0.0476
+    ##  8 Morris        3 0.0476
+    ##  9 Banerjee      2 0.0317
+    ## 10 Chunduri      2 0.0317
     ## # ℹ 18 more rows
 
 Use the following to check your work.

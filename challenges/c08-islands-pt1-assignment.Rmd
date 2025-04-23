@@ -76,7 +76,7 @@ NB. When Zach counted the homes (on 2025-01-08), he found 20 unoccupied out of 5
 -   What percent of homes are *occupied*?
     -   If 17 homes are occupied, 537 homes are unoccupied. This mean 96.9% (97% rounded) of homes are occupied.
 -   Are there any sources of *real* uncertainty in the percent occupied you calculated?
-    -   I don't believe there are any sources of real uncertainty in the percent occupied. Houses are either occupied or they are not, and hypothetically, The Islands shows an accurate depiction of the true occupancy state of each house.
+    -   While I don't believe there is real uncertainty at the moment of calculation - houses are either occupied or are not - the islands is a dynamic situation where islanders can move at will. As such, it is quite possible that by the time I finished counting, or several days later, islanders have moved and introduced real uncertainty into the calculated percent occupied.
 -   Are there any sources of *erroneous* uncertainty in the percent occupied you calculated?
     -   Given that I counted all of the houses manually, it is possible that I counted wrong, which introduces erroneous uncertainty. However, I counted multiple times and compared with multiple people in an attempt to reduce this uncertainty as much as possible.
 
@@ -105,10 +105,8 @@ df_q3 <-
   ## TODO: Complete this code
   mutate(last_name = str_extract(name, pattern = "\\b\\w+$")) %>% 
   group_by(last_name) %>% 
-  summarise(
-    n = n(),
-    p = n / n()
-    ) %>% 
+  summarise(n = n()) %>% 
+  mutate(p = n / sum(n)) %>% 
   arrange(desc(n))
 
 df_q3
