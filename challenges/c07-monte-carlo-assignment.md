@@ -1,7 +1,7 @@
 Estimating Pi With a Shotgun
 ================
-(Your name here)
-2020-
+Carter Harris
+2025-04-22
 
 - [Grading Rubric](#grading-rubric)
   - [Individual](#individual)
@@ -197,7 +197,7 @@ square $x \in [0, 1]$ and $y \in [0, 1]$.
 
 ``` r
 ## TASK: Choose a sample size and generate samples
-n <- 1000 # Choose a sample size
+n <- 5000 # Choose a sample size
 # Generate the data
 df_q1 <-
   tibble(
@@ -331,7 +331,7 @@ df_q3
     ## # A tibble: 1 × 1
     ##   pi_est
     ##    <dbl>
-    ## 1   3.08
+    ## 1   3.16
 
 Use the following to check that you’ve used the correct variable names.
 (NB. This does not check correctness.)
@@ -412,7 +412,10 @@ df_q4 %>%
 
 - What is a range of plausible values, based on the sampling
   distribution you’ve generated?
-  - (Your response here)
+  - Plausible values of pi range from roughly 3.125 to 3.325 based on
+    the distribution generated above. While the entire range falls
+    between roughly 3.05 and 3.375, the vast majority of values falls
+    within the smaller range first presented.
 
 ### **q5** Bootstrap percentile confidence interval
 
@@ -441,7 +444,7 @@ df_q5
     ## # A tibble: 1 × 2
     ##   pi_lo pi_up
     ##   <dbl> <dbl>
-    ## 1  2.98  3.18
+    ## 1  3.11  3.21
 
 ### **q6** CLT confidence interval
 
@@ -457,40 +460,51 @@ in both q5 and q6. If they disagree strongly, that suggests that you’ve
 done something *wrong* in one of the tasks….
 
 ``` r
-df_q4 %>% 
+df_q1 %>%
+  mutate(stat = stat(x, y)) %>% 
   summarize(
-    pi_lo = mean(pi_est) - qnorm(1 - alpha / 2) * (sd(pi_est)/sqrt(n)),
-    pi_up = mean(pi_est) + qnorm(1 - alpha / 2) * (sd(pi_est)/sqrt(n))
+    pi_est = mean(stat),
+    sd = sd(stat),
+    se = sd / sqrt(length(stat))
+    ) %>% 
+  mutate(
+    pi_lo = pi_est - (1.96 * se),
+    pi_hi = pi_est + (1.96 * se)
   )
 ```
 
-    ## # A tibble: 1 × 2
-    ##   pi_lo pi_up
-    ##   <dbl> <dbl>
-    ## 1  3.08  3.09
+    ## # A tibble: 1 × 5
+    ##   pi_est    sd     se pi_lo pi_hi
+    ##    <dbl> <dbl>  <dbl> <dbl> <dbl>
+    ## 1   3.16  1.63 0.0230  3.12  3.21
 
 **Observations**:
 
 - Does your intervals include the true value of $\pi$?
   - Bootstrap does include the true value of pi.
-  - CLT does NOT include the true value of pi.
+  - CLT also does include the true value of pi.
 - How closely do your bootstrap CI and CLT CI agree?
-  - Overall, the CLT CI is much narrower compared to the bootstrap CI.
-    However, this narrower range is contained within the bootstrap
-    confidence interval. As a whole, they agree.
+  - Overall, the two confidence intervals are extremely similar to each
+    each other. There is slight variations on the order of thousandths,
+    but overall the difference between the two is inconsequential.
 - Comment on the width of your CI(s). Would your estimate of $\pi$ be
   good enough for roughly estimating an area (e.g., to buy enough paint
   for an art project)? Would your estimate of $\pi$ be good enough for
   precisely calculating a trajectory (e.g., sending a rocket into
   orbit)?
-  - Pi is already often approximated, and drawing from the middle of
-    either of these ranges would probably result in a close enough value
-    for rough estimation. For this purpose, our estimation is good.
+  - Pi is already often approximated, and drawing from the either of
+    these ranges would probably result in a close enough value for rough
+    estimation. For this purpose, our estimation is good.
   - Our estimate of pi is NOT good enough for precise calculation. There
     remains a small amount of error that would be magnified in any
     situation that would require precision calculations.
 - What would be a *valid* way to make your CI more narrow?
   - Collecting a greater sample size would make the CI more narrow.
+    - Initially, I was running a sample size of 1000, but was getting
+      significant variation between runs in the CLT approximation. To
+      increase the convergence and consistency between runs, I increased
+      this sample size to 5000. Further increases to the sample size
+      would cause this estimate to converge further.
 
 # References
 
