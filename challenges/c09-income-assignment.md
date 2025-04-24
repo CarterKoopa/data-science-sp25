@@ -339,8 +339,6 @@ $$\text{MOE} = 1.645 \times \text{SE}.$$
 ### **q4** Convert the margin of error to standard error. Additionally, compute a 99% confidence interval on income, and normalize the standard error to `income_CV = income_SE / income_estimate`. Provide these columns with the names `income_SE, income_lo, income_hi, income_CV`.
 
 ``` r
-alpha = 0.99
-
 df_q4 <-
   df_q3 %>% 
   mutate(income_SE = income_moe / 1.645) %>% 
@@ -560,14 +558,19 @@ df_data %>%
 
 - What *overall* trend do you see between `SE` and population? Why might
   this trend exist?
-  - As population increases, standard error decreases. Large-population
-    counties make collecting a sample easier given there are more people
-    you can chose from in order to reach a representative sample.
-    Further, the ability to easily collect more observations allows a
-    sample to further converge towards a more accurate singular
-    estimate. More observations and a larger population further diminish
-    he impact of outliers that might swing the data much more in a
-    smaller population and sample.
+  - As population increases, standard error decreases.
+  - As a whole, larger populations are easier to sample than smaller
+    populations.
+    - On one hand, it is much easier to collect a larger sample of the
+      population for a larger population. As the relative sample size
+      increases, the estimated value will converge towards the true
+      population value.
+    - On the other hand, even with the a sample of the same size, the
+      influence of outliers will be lessened as the distribution becomes
+      more normal in a larger population. As such, it is easier to
+      select a representative sample for a larger population. Even with
+      the same sample size, you can achieve a more accurate picture of
+      the entire population.
 - What does this *overall* trend tell you about the relative ease of
   studying small vs large counties?
   - It is probably easier to study large counties compared to small
