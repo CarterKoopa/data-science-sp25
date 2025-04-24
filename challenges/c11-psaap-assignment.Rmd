@@ -174,13 +174,13 @@ rsquare(fit_nonphysical, df_validate)
 **Observations**:
 
 -   Which model is *most accurate*? Which is *least accurate*?
-    -   The `fit_baseline` to `avg_T` is most accurate, while the `fit_cheat` to `x` falls somewhere in the middle, and the `fit_nonphysical` to `idx` is not accurate at all.
+    -   The `fit_cheat` to `x` is most accurate, while the `fit_baseline`to `avg_T` falls somewhere in the middle, and the `fit_nonphysical` to `idx` is not accurate at all.
 -   What *Category* of variable is `avg_T`? Why is it such an effective predictor?
-    -   avg_T is also an output variable; it doesn't actually influence the other output variables. Since it varies in a similar way to the other output variables, of course it is going to be very similar to `T_norm` in this sense.
+    -   `avg_T` is also an output variable. As such, of course it is going to behave the same way as the other output variables, but this doesn't tell us anything about how our input variables (the ones we can actually control) actually impact and control the output. It can effectively predict `T_norm`, but this because `T_norm` is computed in terms of `avg_T` after the other input variables have be used to approximate (or actually real-world influence) `avg_T`.
 -   Would we have access to `avg_T` if we were trying to predict a *new* value of `T_norm`? Is `avg_T` a valid predictor?
     -   No, as `avg_T` is an output. New predictions must be made based upon the input variables that actually cause the output to vary.
 -   What *Category* of variable is `idx`? Does it have any physical meaning?
-    -   `idx` just enumerates each run of the simulation. It doesn't have any physical meaning and is unrelated to any of the input variables or output variables (unless, by chance, `idx` increases linearly with time and there was a consistent change in operating conditions not taken into account with other inputs).
+    -   `idx` is simulation metadata; it enumerates each independant run of the simulation. It doesn't have any physical meaning and is unrelated to any of the input variables or output variables (unless, by chance, `idx` increases linearly with time and there was a consistent change in operating conditions not taken into account with other inputs).
 
 ### **q4** Interpret this model
 
@@ -389,9 +389,14 @@ df_uncert <-
     level = pr_level
   )
 
+
 df_uncert %>% 
   mutate(in_range = (T_norm > pi_lwr & T_norm < pi_upr)) %>% 
-  summarise(mean_in_range = mean(in_range))
+  summarise(
+    mean_in_range = mean(in_range),
+    mean_lwr = mean(pi_lwr),
+    mean_upr = mean(pi_upr)
+    )
 ```
 
 **Recommendation**:
@@ -403,7 +408,7 @@ df_uncert %>%
 -   What fraction of validation cases lie within the intervals you predict? (NB. Make sure to calculate your intervals *based on the validation data*; don't just use one single interval!) How does this compare with `pr_level`?
     -   The percentage of validation cases that lie within the interval is 93.3%. This is higher than the required level of 80% in `pr_level`.
 -   What interval for `T_norm` would you recommend the design team to plan around?
-    -   Based upon this data, it would be reasonable to increase the interval to 90% confidence while still leaving a 3% margin for error.
+    -   Taking a mean of the upper and lower prediction interval ranges suggests a good range for `T_norm` to plan around would be between 0.364 and 1.135.
 -   Are there any other recommendations you would provide?
     -   If the design team wanted to further increase the accuracy of the model, they could fix more of the variables identified as statistically significant in q4 such as I_0, N_p, and d_p
 
